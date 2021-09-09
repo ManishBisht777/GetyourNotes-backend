@@ -5,8 +5,9 @@ const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = "manishBisht";
+const fetchuser = require("../middleware/fetchuser");
 
-// create a user using:post("/api/auth/") .. doesnt require authentication
+//ROUTE:1  create a user using:post("/api/auth/") .. doesnt require authentication
 router.post(
   "/createuser",
   [
@@ -50,7 +51,7 @@ router.post(
   }
 );
 
-// authnticate a user using post("api/auth/login") : no login required
+//Route : 2 authnticate a user using post("api/auth/login") : no login required
 
 router.post(
   "/login",
@@ -68,21 +69,18 @@ router.post(
     try {
       let user = await User.findOne({ email });
       if (!user) {
-        console.log("notfound");
-        return req
+        return res
           .status(400)
           .json({ error: "try to login with correct credetails" });
       }
-      console.log("found");
       console.log(user.password);
 
       const passwordCompare = await bcrypt.compare(password, user.password);
       if (!passwordCompare) {
-        return req
+        return res
           .status(400)
           .json({ error: "try to login with correct credetails" });
       } else {
-        console.log("success");
       }
 
       const data = {
@@ -91,11 +89,24 @@ router.post(
         },
       };
       const jwtdata = jwt.sign(data, JWT_SECRET);
-      res.send(jwtdata);
+      res.json({ authtoken: jwtdata });
     } catch (error) {
       console.log(error.message);
     }
   }
 );
 
+// Route : 3 get details of loggedin user
+
+router.post("/getuser", fetchuser, async (req, res) => {
+  try {
+    userId = req.user.id;
+    console.log(userId);
+    const user = await User.findById(userId).select("-password");
+    console.log(user.name);
+    res.send(user);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
 module.exports = router;
