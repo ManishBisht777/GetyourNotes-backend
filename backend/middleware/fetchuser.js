@@ -1,10 +1,10 @@
 var jwt = require("jsonwebtoken");
 const JWT_SECRET = "manishBisht";
 
-const fetchuser = (req, res, next) => {
+const fetchuser = async (req, res, next) => {
   //get user form jwt token and add id to request object
 
-  const token = req.header("auth-token");
+  const token = await req.header("auth-token");
   if (!token) {
     res.status(401).send("please authnticate using valid token");
   }
