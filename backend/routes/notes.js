@@ -46,33 +46,59 @@ router.post(
 router.put("/updatenote/:id", fetchuser, async (req, res) => {
   const { title, description, tag } = req.body;
 
-  // create new note object
-  const newnote = {};
+  try {
+    // create new note object
+    const newnote = {};
 
-  if (title) {
-    newnote.title = title;
-  }
-  if (description) {
-    newnote.description = description;
-  }
-  if (tag) {
-    newnote.tag = tag;
-  }
+    if (title) {
+      newnote.title = title;
+    }
+    if (description) {
+      newnote.description = description;
+    }
+    if (tag) {
+      newnote.tag = tag;
+    }
 
-  let note = await Notes.findById(req.params.id);
-  console.log(req.params.id);
-  if (!note) {
-    return res.status(404).send("Not found");
-  }
+    let note = await Notes.findById(req.params.id);
+    console.log(req.params.id);
+    if (!note) {
+      return res.status(404).send("Not found");
+    }
 
-  if (note.user.toString() !== req.user.id) {
-    return res.status(401).send("Not Allowed");
+    if (note.user.toString() !== req.user.id) {
+      return res.status(401).send("Not Allowed");
+    }
+    note = await Notes.findByIdAndUpdate(
+      req.params.id,
+      { $set: newnote },
+      { new: true }
+    );
+    res.json(note);
+  } catch (error) {
+    res.send(error);
   }
-  note = await Notes.findByIdAndUpdate(
-    req.params.id,
-    { $set: newnote },
-    { new: true }
-  );
-  res.json(note);
 });
+
+// route : 4 delete a note of user :login required (/api/notes/deletenote);
+router.delete("/deletenote/:id", fetchuser, async (req, res) => {
+  try {
+    // find the note to be deleted
+    let note = await Notes.findById(req.params.id);
+    console.log(req.params.id);
+    if (!note) {
+      return res.status(404).send("Not found");
+    }
+
+    // allow deletion if user owns this note
+    if (note.user.toString() !== req.user.id) {
+      return res.status(401).send("Not Allowed");
+    }
+    note = await Notes.findByIdAndDelete(req.params.id);
+    res.json({ sucess: "note has been deleted", note: note });
+  } catch (error) {
+    res.send(error);
+  }
+});
+
 module.exports = router;
