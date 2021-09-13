@@ -8,6 +8,7 @@ function Notes() {
   const { notes, getnotes } = context;
   useEffect(() => {
     getnotes();
+    // eslint-disable-next-line
   }, []);
   return (
     <>
