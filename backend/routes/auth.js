@@ -60,6 +60,7 @@ router.post(
     body("password", "password can not be empty").exists(),
   ],
   async (req, res) => {
+    let success = false;
     const error = validationResult(req);
     if (!error.isEmpty()) {
       return res.status(400).json({ error: error.array() });
@@ -71,7 +72,7 @@ router.post(
       if (!user) {
         return res
           .status(400)
-          .json({ error: "try to login with correct credetails" });
+          .json({ success, error: "try to login with correct credetails" });
       }
       console.log(user.password);
 
@@ -79,7 +80,7 @@ router.post(
       if (!passwordCompare) {
         return res
           .status(400)
-          .json({ error: "try to login with correct credetails" });
+          .json({ success, error: "try to login with correct credetails" });
       } else {
       }
 
@@ -88,8 +89,9 @@ router.post(
           id: user.id,
         },
       };
+      success = true;
       const jwtdata = jwt.sign(data, JWT_SECRET);
-      res.json({ authtoken: jwtdata });
+      res.json({ success, authtoken: jwtdata });
     } catch (error) {
       console.log(error.message);
     }
