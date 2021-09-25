@@ -1,47 +1,70 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import noteContext from "../context/notes/notesContext";
 import Addnote from "./Addnote";
 import Noteitem from "./Noteitem";
 
 function Notes() {
   const context = useContext(noteContext);
-  const { notes, getnotes } = context;
+  const { notes, getnotes, editnote } = context;
   useEffect(() => {
     getnotes();
     // eslint-disable-next-line
   }, []);
 
-  const updatenote = (note) => {
+  const ref = useRef(null);
+  const refclose = useRef(null);
+  const updatenote = (currentNote) => {
     ref.current.click();
+    setnote({
+      etitle: currentNote.title,
+      edescription: currentNote.description,
+      etag: currentNote.tag,
+      id: currentNote._id,
+    });
   };
 
-  const ref = useRef(null);
+  const [note, setnote] = useState({
+    id: "",
+    etitle: "",
+    edescription: "",
+    etag: "deafult",
+  });
+  const handleaddnote = (e) => {
+    console.log("updating note ", note);
+    editnote(note.id, note.etitle, note.edescription, note.etag);
+    refclose.current.click();
+  };
+
+  const onchange = (e) => {
+    setnote({ ...note, [e.target.name]: e.target.value });
+  };
+
   return (
     <>
       <Addnote />
       <button
         ref={ref}
         type="button"
-        className="btn btn-primary"
+        className="btn btn-primary d-none"
         data-toggle="modal"
-        data-target="#exampleModal"
+        data-target="#exampleModalCenter"
       >
         Launch demo modal
       </button>
 
       <div
         className="modal fade"
-        id="exampleModal"
+        id="exampleModalCenter"
         tabIndex="-1"
         role="dialog"
-        aria-labelledby="exampleModalLabel"
+        aria-labelledby="exampleModalCenterTitle"
         aria-hidden="true"
       >
-        <div className="modal-dialog" role="document">
+        <div className="modal-dialog modal-dialog-centered" role="document">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
-                Edit Notes
+              <h5 className="modal-title" id="exampleModalLongTitle">
+                Modal title
               </h5>
               <button
                 type="button"
@@ -52,16 +75,64 @@ function Notes() {
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div className="modal-body">...</div>
+            <div className="modal-body">
+              <form>
+                <div className="mb-3">
+                  <label htmlFor="title" className="form-label">
+                    title
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    id="etitle"
+                    name="etitle"
+                    aria-describedby="emailHelp"
+                    onChange={onchange}
+                    value={note.etitle}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="description" className="form-label">
+                    description
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    id="edescription"
+                    name="edescription"
+                    onChange={onchange}
+                    value={note.edescription}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="tag" className="form-label">
+                    tag
+                  </label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    id="etag"
+                    name="etag"
+                    onChange={onchange}
+                    value={note.etag}
+                  />
+                </div>
+              </form>
+            </div>
             <div className="modal-footer">
               <button
                 type="button"
                 className="btn btn-secondary"
                 data-dismiss="modal"
+                ref={refclose}
               >
                 Close
               </button>
-              <button type="button" className="btn btn-primary">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleaddnote}
+              >
                 Update Notes
               </button>
             </div>
@@ -71,7 +142,7 @@ function Notes() {
       <div className="row my-3">
         {notes.map((note) => {
           return (
-            <Noteitem key={note._id} updatenote={updatenote} note={note} />
+            <Noteitem key={note._id} note={note} updatenote={updatenote} />
           );
         })}
       </div>
