@@ -47,6 +47,7 @@ const NoteState = (props) => {
     };
     setnotes(notes.concat(note));
   };
+
   // delete note
   const deletenote = async (id) => {
     const response = await fetch(`${host}/api/notes/deletenote/${id}`, {
@@ -65,6 +66,7 @@ const NoteState = (props) => {
     });
     setnotes(NewNotes);
   };
+
   // edit note
   const editnote = async (id, title, description, tag) => {
     // api call

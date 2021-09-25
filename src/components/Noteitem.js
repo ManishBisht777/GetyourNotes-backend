@@ -4,7 +4,7 @@ import noteContext from "../context/notes/notesContext";
 function Noteitem(props) {
   const context = useContext(noteContext);
   const { deletenote } = context;
-  const { note } = props;
+  const { note, updatenote } = props;
 
   return (
     <div>
@@ -20,7 +20,12 @@ function Noteitem(props) {
                 deletenote(note._id);
               }}
             ></i>
-            <i className="far fa-edit mx-2"></i>
+            <i
+              className="far fa-edit mx-2"
+              onClick={() => {
+                updatenote(note);
+              }}
+            ></i>
           </div>
         </div>
       </div>
