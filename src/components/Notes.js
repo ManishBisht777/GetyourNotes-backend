@@ -89,6 +89,8 @@ function Notes() {
                     aria-describedby="emailHelp"
                     onChange={onchange}
                     value={note.etitle}
+                    minLength={5}
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -102,6 +104,8 @@ function Notes() {
                     name="edescription"
                     onChange={onchange}
                     value={note.edescription}
+                    minLength={5}
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -140,6 +144,9 @@ function Notes() {
         </div>
       </div>
       <div className="row my-3">
+        <div className="container">
+          {notes.length === 0 && "No notes to display"}
+        </div>
         {notes.map((note) => {
           return (
             <Noteitem key={note._id} note={note} updatenote={updatenote} />
