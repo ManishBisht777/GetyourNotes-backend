@@ -7,6 +7,8 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = "manishBisht";
 const fetchuser = require("../middleware/fetchuser");
 
+let success = false;
+
 //ROUTE:1  create a user using:post("/api/auth/") .. doesnt require authentication
 router.post(
   "/createuser",
@@ -18,7 +20,7 @@ router.post(
   async (req, res) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {
-      return res.status(400).json({ error: error.array() });
+      return res.status(400).json({ success, error: error.array() });
     }
 
     //checking existing user
@@ -43,8 +45,10 @@ router.post(
           id: user.id,
         },
       };
-      const jwtdata = jwt.sign(data, JWT_SECRET);
-      console.log(jwtdata);
+      success = true;
+      const authtoken = jwt.sign(data, JWT_SECRET);
+      res.json({ success, authtoken });
+      console.log(authtoken);
     } catch (error) {
       console.log(error.message);
     }
@@ -60,7 +64,6 @@ router.post(
     body("password", "password can not be empty").exists(),
   ],
   async (req, res) => {
-    let success = false;
     const error = validationResult(req);
     if (!error.isEmpty()) {
       return res.status(400).json({ error: error.array() });

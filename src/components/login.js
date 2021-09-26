@@ -70,6 +70,7 @@ const Login = () => {
             className="form-check-input"
             id="exampleCheck1"
           />
+          s
           <label name="form-check-label" htmlFor="exampleCheck1">
             Check me out
           </label>
