@@ -2,12 +2,17 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import noteContext from "../context/notes/notesContext";
 import Addnote from "./Addnote";
 import Noteitem from "./Noteitem";
-
+import { useHistory } from "react-router-dom";
 function Notes() {
   const context = useContext(noteContext);
+  let history = useHistory();
   const { notes, getnotes, editnote } = context;
   useEffect(() => {
-    getnotes();
+    if (localStorage.getItem("token")) {
+      getnotes();
+    } else {
+      history.push("/login");
+    }
     // eslint-disable-next-line
   }, []);
 
@@ -148,9 +153,7 @@ function Notes() {
           {notes.length === 0 && "No notes to display"}
         </div>
         {notes.map((note) => {
-          return (
-            <Noteitem key={note._id} note={note} updatenote={updatenote} />
-          );
+          return <Noteitem note={note} updatenote={updatenote} />;
         })}
       </div>
     </>

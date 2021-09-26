@@ -1,7 +1,13 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 function Navbar() {
+  const history = useHistory();
+  const handlelogout = () => {
+    localStorage.removeItem("token");
+    history.push("/login");
+  };
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -44,12 +50,24 @@ function Navbar() {
                 </Link>
               </li>
             </ul>
-            <Link className="btn btn-info mx-2" to="/login" role="button">
-              Login
-            </Link>
-            <Link className="btn btn-warning max-2" to="/signup" role="button">
-              Signup
-            </Link>
+            {!localStorage.getItem("token") ? (
+              <form className="d-flex">
+                <Link className="btn btn-info mx-2" to="/login" role="button">
+                  Login
+                </Link>
+                <Link
+                  className="btn btn-warning max-2"
+                  to="/signup"
+                  role="button"
+                >
+                  Signup
+                </Link>
+              </form>
+            ) : (
+              <button onClick={handlelogout} className="btn-primary">
+                Logout
+              </button>
+            )}
           </div>
         </div>
       </nav>
