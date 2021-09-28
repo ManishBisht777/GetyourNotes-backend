@@ -1,1 +1,1 @@
-this project is a follow along project for learning concepts of react
+this project is a follow along project for learning concepts of react so there are many bugs in there but the motive to this project was full filled; 
